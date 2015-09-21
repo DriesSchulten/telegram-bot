@@ -1,6 +1,6 @@
 package nl.dries.telegram.bot
 
-import akka.actor.{Actor, Props}
+import akka.actor.{Cancellable, Actor, Props}
 
 import scala.concurrent.duration._
 
@@ -33,7 +33,16 @@ class UpdatePoller extends Actor {
   val runner = context.system.actorOf(UpdateRunner.props(timeout, botConfig.getString("token")))
 
   /** Start requesting updates */
-  context.system.scheduler.scheduleOnce(1 second, runner, TriggerUpdate(lastReceivedUpdate getOrElse 0))
+  scheduleUpdate(1 second)
+
+  /**
+   * Schedule a update, delayed by a given delay
+   * @param delay the delay before triggering the update
+   * @return cancellable
+   */
+  def scheduleUpdate(delay: FiniteDuration): Cancellable = {
+    context.system.scheduler.scheduleOnce(delay, runner, TriggerUpdate(lastReceivedUpdate getOrElse 0))
+  }
 
   override def receive: Receive = {
     case GetUpdates =>
@@ -42,9 +51,11 @@ class UpdatePoller extends Actor {
 
     case UpdateResult(updates) =>
       if (updates.nonEmpty) {
-        lastReceivedUpdate = Some(updates.map(_.id).max)
+        lastReceivedUpdate = Some(updates.map(_.id).max + 1)
         pendingUpdates = pendingUpdates ++ updates
+        runner ! TriggerUpdate(lastReceivedUpdate getOrElse 0)
+      } else {
+        scheduleUpdate(5 seconds)
       }
-      runner ! TriggerUpdate(lastReceivedUpdate getOrElse 0)
   }
 }
