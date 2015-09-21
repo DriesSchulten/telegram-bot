@@ -1,14 +1,12 @@
 package nl.dries.telegram.bot
 
-import akka.actor.{Cancellable, Actor, Props}
+import akka.actor.{Actor, ActorRef, Cancellable, Props}
 
 import scala.concurrent.duration._
 
 object UpdatePoller {
 
-  case object GetUpdates
-
-  case class GetUpdatesResponse(updates: List[Update])
+  case class NewUpdate(update: Update)
 
   def props() = Props(classOf[UpdatePoller])
 }
@@ -25,8 +23,8 @@ class UpdatePoller extends Actor {
   /** Last received counter */
   var lastReceivedUpdate: Option[Int] = None
 
-  /** Not yet retrieved updates, but already received via long-poll */
-  var pendingUpdates = List.empty[Update]
+  /** Set of listeners to updates */
+  var updateListeners = Set.empty[ActorRef]
 
   /** Runner actor */
   val botConfig = context.system.settings.config.getConfig("bot")
@@ -45,17 +43,16 @@ class UpdatePoller extends Actor {
   }
 
   override def receive: Receive = {
-    case GetUpdates =>
-      sender() ! GetUpdatesResponse(pendingUpdates)
-      pendingUpdates = List.empty[Update]
 
     case UpdateResult(updates) =>
       if (updates.nonEmpty) {
         lastReceivedUpdate = Some(updates.map(_.id).max + 1)
-        pendingUpdates = pendingUpdates ++ updates
-        runner ! TriggerUpdate(lastReceivedUpdate getOrElse 0)
-      } else {
-        scheduleUpdate(5 seconds)
+
+        for {
+          listener <- updateListeners
+          update <- updates
+        } yield listener ! NewUpdate(update)
       }
+      scheduleUpdate(5 seconds)
   }
 }
