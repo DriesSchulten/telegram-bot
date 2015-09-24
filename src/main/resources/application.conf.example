@@ -2,4 +2,9 @@ bot {
   token = TOKEN
   name = NAME
   user-name = USER_NAME
+
+  api {
+    base = "https://api.telegram.org/bot"
+    timeout = 20
+  }
 }

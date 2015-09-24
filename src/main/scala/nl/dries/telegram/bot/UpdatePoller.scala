@@ -1,14 +1,15 @@
 package nl.dries.telegram.bot
 
 import akka.actor.{Actor, ActorRef, Cancellable, Props}
+import spray.http.Uri
 
 import scala.concurrent.duration._
 
 object UpdatePoller {
 
-  case class NewUpdate(update: Update)
-
   def props() = Props(classOf[UpdatePoller])
+
+  case class NewUpdate(update: Update)
 }
 
 class UpdatePoller extends Actor {
@@ -17,30 +18,17 @@ class UpdatePoller extends Actor {
   import UpdateRunner._
   import context.dispatcher
 
-  /** Request timeout to use */
-  val timeout: Int = 20
-
+  /** Config */
+  val appConfig = AppConfig(context.system)
+  /** Runner actor */
+  val runner = context.actorOf(UpdateRunner.props(appConfig.timeout, Uri(appConfig.getupdates)))
   /** Last received counter */
   var lastReceivedUpdate: Option[Int] = None
-
   /** Set of listeners to updates */
   var updateListeners = Set.empty[ActorRef]
 
-  /** Runner actor */
-  val botConfig = context.system.settings.config.getConfig("bot")
-  val runner = context.system.actorOf(UpdateRunner.props(timeout, botConfig.getString("token")))
-
   /** Start requesting updates */
-  scheduleUpdate(1 second)
-
-  /**
-   * Schedule a update, delayed by a given delay
-   * @param delay the delay before triggering the update
-   * @return cancellable
-   */
-  def scheduleUpdate(delay: FiniteDuration): Cancellable = {
-    context.system.scheduler.scheduleOnce(delay, runner, TriggerUpdate(lastReceivedUpdate getOrElse 0))
-  }
+  scheduleUpdate(1.second)
 
   override def receive: Receive = {
 
@@ -53,6 +41,15 @@ class UpdatePoller extends Actor {
           update <- updates
         } yield listener ! NewUpdate(update)
       }
-      scheduleUpdate(5 seconds)
+      scheduleUpdate(5.seconds)
+  }
+
+  /**
+   * Schedule a update, delayed by a given delay
+   * @param delay the delay before triggering the update
+   * @return cancellable
+   */
+  def scheduleUpdate(delay: FiniteDuration): Cancellable = {
+    context.system.scheduler.scheduleOnce(delay, runner, TriggerUpdate(lastReceivedUpdate getOrElse 0))
   }
 }
