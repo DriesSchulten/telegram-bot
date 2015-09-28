@@ -7,9 +7,14 @@ import scala.concurrent.duration._
 
 object UpdatePoller {
 
-  def props() = Props(classOf[UpdatePoller])
+  def props = Props(classOf[UpdatePoller])
 
   case class NewUpdate(update: Update)
+
+  case class AddListener(listener: ActorRef)
+
+  case class RemoveListener(listener: ActorRef)
+
 }
 
 class UpdatePoller extends Actor {
@@ -42,6 +47,13 @@ class UpdatePoller extends Actor {
         } yield listener ! NewUpdate(update)
       }
       scheduleUpdate(5.seconds)
+
+    case AddListener(listener) =>
+      updateListeners = updateListeners + listener
+
+    case RemoveListener(listener) =>
+      updateListeners = updateListeners - listener
+
   }
 
   /**

@@ -8,5 +8,7 @@ import akka.actor.ActorSystem
 object TelegramBot extends App {
 
   val system = ActorSystem("telegram-bot")
-  val updatePoller = system.actorOf(UpdatePoller.props())
+  val updatePoller = system.actorOf(UpdatePoller.props)
+
+  val echoListener = system.actorOf(EchoListener.props(updatePoller))
 }
