@@ -14,7 +14,7 @@ class UpdatePollerSpec extends TestKit(ActorSystem("update-spec")) with FunSuite
 
   test("Actor should trigger runner when starting up") {
     val runner = TestProbe()
-    val poller = system.actorOf(UpdatePoller.props(), "poller")
+    val poller = system.actorOf(UpdatePoller.props, "poller")
 
     runner.expectMsg(2.seconds, TriggerUpdate(0))
   }
