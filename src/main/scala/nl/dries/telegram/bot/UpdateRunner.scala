@@ -28,11 +28,7 @@ class UpdateRunner(timeout: Int, apiUri: Uri) extends Actor with ActorLogging {
 
   implicit val requestTimeout = Timeout(timeout.seconds)
 
-  /** Loggers */
-  val logRequest: HttpRequest => HttpRequest = { r => log.debug(r.toString); r }
-  val logResponse: HttpResponse => HttpResponse = { r => log.debug(r.toString); r }
-
-  private val pipeline = logRequest ~> sendReceive ~> logResponse ~> unmarshal[Updates]
+  private val pipeline = logRequest(log) ~> sendReceive ~> logResponse(log) ~> unmarshal[Updates]
 
   override def receive: Receive = {
     case TriggerUpdate(offset) =>
