@@ -29,4 +29,20 @@ class TelegramJsonProtocolSpec extends FunSuite with ShouldMatchers {
     val json = message.toJson
     assert(json.convertTo[Message] === message)
   }
+
+  test("A sendable message should convert the user (sender) to a 'chat_id' property") {
+    val sender = User(1, "Test", "User", "test")
+    val sendableText = SendableText(sender, "The message content")
+
+    val json = sendableText.toJson
+    assert(json.asJsObject.fields.get("chat_id").isDefined)
+  }
+
+  test("A sendable message should convert the group (sender) to a 'chat_id' property") {
+    val sender = GroupChat(5, "Test gruop")
+    val sendableText = SendableText(sender, "The message content")
+
+    val json = sendableText.toJson
+    assert(json.asJsObject.fields.get("chat_id").isDefined)
+  }
 }
