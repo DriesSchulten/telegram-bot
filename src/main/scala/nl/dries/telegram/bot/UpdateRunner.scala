@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, Props}
 import akka.util.Timeout
 import nl.dries.telegram.bot.UpdateRunner.{TriggerUpdate, UpdateResult}
 import spray.client.pipelining._
-import spray.http.{FormData, HttpRequest, HttpResponse, Uri}
+import spray.http.{FormData, Uri}
 
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
@@ -18,17 +18,15 @@ object UpdateRunner {
   case class TriggerUpdate(offset: Int) extends UpdateOperation
 
   case class UpdateResult(updates: List[Update]) extends UpdateOperation
+
 }
 
-class UpdateRunner(timeout: Int, apiUri: Uri) extends Actor with ActorLogging {
+class UpdateRunner(timeout: Int, apiUri: Uri) extends Actor with ActorLogging with JsonCommunicator {
 
-  import TelegramJsonProtocol._
   import context.dispatcher
-  import spray.httpx.SprayJsonSupport._
+  import TelegramJsonProtocol._
 
   implicit val requestTimeout = Timeout(timeout.seconds)
-
-  private val pipeline = logRequest(log) ~> sendReceive ~> logResponse(log) ~> unmarshal[Updates]
 
   override def receive: Receive = {
     case TriggerUpdate(offset) =>
@@ -36,7 +34,7 @@ class UpdateRunner(timeout: Int, apiUri: Uri) extends Actor with ActorLogging {
 
       val params = Map("offset" -> offset.toString, "timeout" -> timeout.toString)
 
-      pipeline(Post(apiUri, FormData(params))) onComplete {
+      sendRequest[Updates](Post(apiUri, FormData(params))) onComplete {
         case Success(updates) =>
           trigger ! UpdateResult(updates.result)
         case Failure(ex) =>
