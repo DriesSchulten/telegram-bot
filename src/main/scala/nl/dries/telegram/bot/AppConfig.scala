@@ -10,11 +10,13 @@ class AppConfig(config: Config) extends Extension {
 
   val token = config.getString("bot.token")
 
-  val apiBase = config.getString("bot.api.base")
+  private val apiBase = config.getString("bot.api.base")
 
   val timeout = config.getInt("bot.api.timeout")
 
-  val getupdates = s"$apiBase$token/getupdates"
+  lazy val botApi = s"$apiBase$token"
+
+  lazy val getupdates = s"$botApi/getupdates"
 }
 
 object AppConfig extends ExtensionId[AppConfig] with ExtensionIdProvider {

@@ -14,7 +14,7 @@ case class Update(id: Int, message: Message)
 
 case class Updates(ok: Boolean, result: List[Update])
 
-case class User(id: Int, firstName: String, lastName: String, username: String) extends MessageSender
+case class User(id: Int, firstName: String, lastName: String, username: Option[String]) extends MessageSender
 
 case class GroupChat(id: Int, title: String) extends MessageSender
 
@@ -44,6 +44,15 @@ object TelegramJsonProtocol extends DefaultJsonProtocol {
     override def read(json: JsValue): MessageSender = throw new IllegalStateException("Not possible, write only for generic MessageSender!")
 
     override def write(obj: MessageSender): JsValue = JsNumber(obj.id)
+  }
+
+  implicit object SendableMessageFormat extends RootJsonFormat[SendableMessage] {
+    override def write(obj: SendableMessage): JsValue = obj match {
+      case m: SendableText => m.toJson
+      case _ => throw new SerializationException("Unable to serialize")
+    }
+
+    override def read(json: JsValue): SendableMessage = throw new IllegalStateException("Not possible, read specific sub-class")
   }
 
   implicit val sendableTextFormat = jsonFormat(SendableText, "chat_id", "text")
