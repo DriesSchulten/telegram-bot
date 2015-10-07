@@ -14,7 +14,7 @@ class TelegramJsonProtocolSpec extends FunSuite with ShouldMatchers {
   val timeInSeconds = new Date().getTime / 1000
 
   test("A message should be able to serialize to/from JSON with a user") {
-    val user = User(2, "Dries", "Schulten", Some("Dries_Schulten"))
+    val user = User(2, "Dries", Some("Schulten"), Some("Dries_Schulten"))
     val message = Message(1, new Date(timeInSeconds * 1000), Some("text"), Left(user), user)
 
     val json = message.toJson
@@ -22,7 +22,7 @@ class TelegramJsonProtocolSpec extends FunSuite with ShouldMatchers {
   }
 
   test("A message should be able to serialize to/from JSON with a group chat") {
-    val user = User(2, "Dries", "Schulten", None)
+    val user = User(2, "Dries", Some("Schulten"), None)
     val group = GroupChat(3, "Group chat")
     val message = Message(1, new Date(timeInSeconds * 1000), Some("message"), Right(group), user)
 
@@ -31,7 +31,7 @@ class TelegramJsonProtocolSpec extends FunSuite with ShouldMatchers {
   }
 
   test("A sendable message should convert the user (sender) to a 'chat_id' property") {
-    val sender = User(1, "Test", "User", Some("test"))
+    val sender = User(1, "Test", None, Some("test"))
     val sendableText = SendableText(sender, "The message content")
 
     val json = sendableText.toJson

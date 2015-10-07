@@ -14,9 +14,11 @@ case class Update(id: Int, message: Message)
 
 case class Updates(ok: Boolean, result: List[Update])
 
-case class User(id: Int, firstName: String, lastName: String, username: Option[String]) extends MessageSender
+case class User(id: Int, firstName: String, lastName: Option[String], username: Option[String]) extends MessageSender
 
 case class GroupChat(id: Int, title: String) extends MessageSender
+
+case class OperationResult[T](ok: Boolean, result: T)
 
 sealed trait SendableMessage {
   def chat: MessageSender
@@ -30,7 +32,7 @@ object TelegramJsonProtocol extends DefaultJsonProtocol {
 
     override def read(json: JsValue): Date = json match {
       case JsNumber(value) => new Date(value.toLong * 1000)
-      case _ => throw new DeserializationException("Expected value not in epoch")
+      case _ => throw new DeserializationException("Expected value not an epoch")
     }
   }
 
@@ -39,6 +41,7 @@ object TelegramJsonProtocol extends DefaultJsonProtocol {
   implicit val messageFormat = jsonFormat(Message, "message_id", "date", "text", "chat", "from")
   implicit val updateFormat = jsonFormat(Update, "update_id", "message")
   implicit val updatesFormat = jsonFormat2(Updates)
+  implicit def operationResultFormat[T: JsonFormat] = jsonFormat2(OperationResult.apply[T])
 
   implicit object MessageSenderFormat extends RootJsonFormat[MessageSender] {
     override def read(json: JsValue): MessageSender = throw new IllegalStateException("Not possible, write only for generic MessageSender!")
