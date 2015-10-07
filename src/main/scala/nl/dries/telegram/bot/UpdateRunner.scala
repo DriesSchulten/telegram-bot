@@ -34,7 +34,7 @@ class UpdateRunner(timeout: Int, apiUri: Uri) extends Actor with ActorLogging wi
 
       val params = Map("offset" -> offset.toString, "timeout" -> timeout.toString)
 
-      sendRequest[Updates](Post(apiUri, FormData(params))) onComplete {
+      sendRequest[OperationResult[List[Update]]](Post(apiUri, FormData(params))) onComplete {
         case Success(updates) =>
           trigger ! UpdateResult(updates.result)
         case Failure(ex) =>
