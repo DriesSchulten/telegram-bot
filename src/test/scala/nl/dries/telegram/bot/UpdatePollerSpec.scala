@@ -8,7 +8,7 @@ import org.scalatest.{FunSuiteLike, Matchers}
 import scala.concurrent.duration._
 
 /**
- * @author schulten
+ * Update poller specs
  */
 class UpdatePollerSpec extends TestKit(ActorSystem("update-spec")) with FunSuiteLike with Matchers {
 

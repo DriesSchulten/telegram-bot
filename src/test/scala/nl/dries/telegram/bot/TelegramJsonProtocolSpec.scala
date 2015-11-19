@@ -7,9 +7,9 @@ import org.scalatest._
 import spray.json._
 
 /**
- * Model/JSON spec
- */
-class TelegramJsonProtocolSpec extends FunSuite with ShouldMatchers {
+  * Model/JSON spec
+  */
+class TelegramJsonProtocolSpec extends FunSuite with Matchers {
 
   val timeInSeconds = new Date().getTime / 1000
 
@@ -18,7 +18,7 @@ class TelegramJsonProtocolSpec extends FunSuite with ShouldMatchers {
     val message = Message(1, new Date(timeInSeconds * 1000), Some("text"), Left(user), user)
 
     val json = message.toJson
-    assert(json.convertTo[Message] === message)
+    json.convertTo[Message] shouldBe message
   }
 
   test("A message should be able to serialize to/from JSON with a group chat") {
@@ -27,7 +27,7 @@ class TelegramJsonProtocolSpec extends FunSuite with ShouldMatchers {
     val message = Message(1, new Date(timeInSeconds * 1000), Some("message"), Right(group), user)
 
     val json = message.toJson
-    assert(json.convertTo[Message] === message)
+    json.convertTo[Message] shouldBe message
   }
 
   test("A sendable message should convert the user (sender) to a 'chat_id' property") {
@@ -35,7 +35,7 @@ class TelegramJsonProtocolSpec extends FunSuite with ShouldMatchers {
     val sendableText = SendableText(sender, "The message content")
 
     val json = sendableText.toJson
-    assert(json.asJsObject.fields.get("chat_id").isDefined)
+    json.asJsObject.fields.get("chat_id") shouldBe 'defined
   }
 
   test("A sendable message should convert the group (sender) to a 'chat_id' property") {
@@ -43,6 +43,6 @@ class TelegramJsonProtocolSpec extends FunSuite with ShouldMatchers {
     val sendableText = SendableText(sender, "The message content")
 
     val json = sendableText.toJson
-    assert(json.asJsObject.fields.get("chat_id").isDefined)
+    json.asJsObject.fields.get("chat_id") shouldBe 'defined
   }
 }

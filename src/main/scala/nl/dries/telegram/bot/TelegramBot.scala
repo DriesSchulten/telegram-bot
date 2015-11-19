@@ -1,6 +1,7 @@
 package nl.dries.telegram.bot
 
 import akka.actor.ActorSystem
+import nl.dries.telegram.bot.listeners.EchoListener
 
 /**
  * Bot entry-point

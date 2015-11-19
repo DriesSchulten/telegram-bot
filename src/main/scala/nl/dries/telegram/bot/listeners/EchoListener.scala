@@ -1,7 +1,8 @@
-package nl.dries.telegram.bot
+package nl.dries.telegram.bot.listeners
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import nl.dries.telegram.bot.ChatHandler.{SendMessage, SendFailure, SendSucces}
+import nl.dries.telegram.bot.ChatHandler.{SendFailure, SendMessage, SendSucces}
+import nl.dries.telegram.bot._
 import spray.http.Uri
 
 object EchoListener {
