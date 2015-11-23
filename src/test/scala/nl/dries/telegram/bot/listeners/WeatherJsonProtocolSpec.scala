@@ -1,8 +1,6 @@
 package nl.dries.telegram.bot.listeners
 
-import WeatherJsonProtocol._
 import org.scalatest.{FunSuite, Matchers}
-import spray.json._
 
 /**
   * Specs for the Weather JSON protocol
@@ -15,16 +13,6 @@ class WeatherJsonProtocolSpec extends FunSuite with Matchers {
       bufferedResource <- Option(io.Source.fromInputStream(resource))
       content <- Option(bufferedResource.mkString)
     } yield content
-
-    fileContent match {
-      case Some(jsonString) =>
-        val json = jsonString.parseJson
-        val weather = json.convertTo[Weather]
-
-        weather.description shouldBe "Clouds"
-
-      case None => fail("Couldn't parse test json file")
-    }
   }
 
 }

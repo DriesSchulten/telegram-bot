@@ -23,8 +23,8 @@ object UpdateRunner {
 
 class UpdateRunner(timeout: Int, apiUri: Uri) extends Actor with ActorLogging with JsonCommunicator {
 
-  import TelegramJsonProtocol._
   import context.dispatcher
+  import org.json4s.JsonDSL._
 
   implicit val requestTimeout = Timeout(timeout.seconds)
 
@@ -32,9 +32,8 @@ class UpdateRunner(timeout: Int, apiUri: Uri) extends Actor with ActorLogging wi
     case TriggerUpdate(offset) =>
       val trigger = sender()
 
-      val params = Map("offset" -> offset.toString, "timeout" -> timeout.toString)
-
-      sendRequest[OperationResult[List[Update]]](Post(apiUri, FormData(params))) onComplete {
+      val params = ("offset" -> offset) ~ ("timeout" -> timeout)
+      sendRequest[OperationResult[List[Update]]](Post(apiUri, params)) onComplete {
         case Success(updates) =>
           trigger ! UpdateResult(updates.result)
         case Failure(ex) =>

@@ -15,7 +15,7 @@ import scala.util.{Failure, Success, Try}
 /**
  * JSON communicator
  */
-trait JsonCommunicator extends SprayJsonSupport {
+trait JsonCommunicator extends TelegramJsonProtocol {
   self: Actor =>
 
   import context.dispatcher

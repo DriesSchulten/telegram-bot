@@ -15,7 +15,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
   "io.spray" %% "spray-client" % sprayVersion,
   "io.spray" %% "spray-httpx" % sprayVersion,
-  "io.spray" %% "spray-json" % "1.3.2",
   "org.json4s" %% "json4s-native" % "3.3.0",
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.4",
   "org.scalatest" %% "scalatest" % "2.2.5" % Test

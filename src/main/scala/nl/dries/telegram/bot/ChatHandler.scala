@@ -22,7 +22,6 @@ object ChatHandler {
 class ChatHandler(apiBase: Uri) extends Actor with JsonCommunicator with ActorLogging {
 
   import ChatHandler._
-  import TelegramJsonProtocol._
   import context.dispatcher
 
   implicit val requestTimeout = Timeout(5.seconds)

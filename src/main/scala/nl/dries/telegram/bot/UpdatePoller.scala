@@ -39,7 +39,7 @@ class UpdatePoller extends Actor {
 
     case UpdateResult(updates) =>
       if (updates.nonEmpty) {
-        lastReceivedUpdate = Some(updates.map(_.id).max + 1)
+        lastReceivedUpdate = Some(updates.map(_.updateId).max + 1)
 
         for {
           listener <- updateListeners
