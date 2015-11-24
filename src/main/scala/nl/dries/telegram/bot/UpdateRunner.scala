@@ -21,7 +21,7 @@ object UpdateRunner {
 
 }
 
-class UpdateRunner(timeout: Int, apiUri: Uri) extends Actor with ActorLogging with JsonCommunicator {
+class UpdateRunner(timeout: Int, apiUri: Uri) extends Actor with ActorLogging with JsonCommunicator with TelegramJsonProtocol {
 
   import context.dispatcher
   import org.json4s.JsonDSL._

@@ -19,7 +19,7 @@ object ChatHandler {
   def props(apiBase: Uri) = Props(classOf[ChatHandler], apiBase)
 }
 
-class ChatHandler(apiBase: Uri) extends Actor with JsonCommunicator with ActorLogging {
+class ChatHandler(apiBase: Uri) extends Actor with JsonCommunicator with TelegramJsonProtocol with ActorLogging {
 
   import ChatHandler._
   import context.dispatcher

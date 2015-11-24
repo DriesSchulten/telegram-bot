@@ -8,7 +8,7 @@ import org.scalatest._
 /**
   * Model/JSON spec
   */
-class TelegramJsonProtocolSpec extends FunSuite with Matchers with TelegramJsonProtocol {
+class TelegramJsonProtocolSpec extends FunSuite with Matchers with Json4sSupport with TelegramJsonProtocol {
 
   val timeInSeconds = new Date().getTime / 1000
 
