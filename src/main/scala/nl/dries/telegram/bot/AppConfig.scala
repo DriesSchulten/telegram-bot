@@ -17,6 +17,10 @@ class AppConfig(config: Config) extends Extension {
   lazy val botApi = s"$apiBase$token"
 
   lazy val getupdates = s"$botApi/getupdates"
+
+  val weatherToken = config.getString("weather.token")
+
+  val weatherApi = config.getString("weather.api")
 }
 
 object AppConfig extends ExtensionId[AppConfig] with ExtensionIdProvider {

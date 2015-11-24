@@ -1,7 +1,7 @@
 package nl.dries.telegram.bot
 
 import akka.actor.ActorSystem
-import nl.dries.telegram.bot.listeners.EchoListener
+import nl.dries.telegram.bot.listeners.{WeatherListener, EchoListener}
 
 /**
  * Bot entry-point
@@ -12,4 +12,5 @@ object TelegramBot extends App {
   val updatePoller = system.actorOf(UpdatePoller.props)
 
   val echoListener = system.actorOf(EchoListener.props(updatePoller))
+  val weatherListener = system.actorOf(WeatherListener.props(updatePoller))
 }

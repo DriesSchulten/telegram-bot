@@ -31,7 +31,7 @@ class EchoListener(poller: ActorRef) extends Actor with ActorLogging {
         case Some(text) =>
           log.info("Got message, sending reply")
           val sender = update.message.chat.fold(u => u, g => g)
-          val reply = new SendableText(sender, text)
+            val reply = new SendableText(sender, text)
           chatActor ! SendMessage(reply)
           awaitingReplies = awaitingReplies + reply
         case None => log.info("No text in message with id")

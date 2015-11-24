@@ -3,7 +3,7 @@ package nl.dries.telegram.bot
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.util.Timeout
 import nl.dries.telegram.bot.UpdateRunner.{TriggerUpdate, UpdateResult}
-import spray.http.{FormData, Uri}
+import spray.http.Uri
 import spray.httpx.RequestBuilding._
 
 import scala.concurrent.duration._
