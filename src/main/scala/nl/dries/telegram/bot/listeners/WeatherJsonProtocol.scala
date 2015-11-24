@@ -5,8 +5,8 @@ import org.json4s.native.JsonParser
 import spray.http.{HttpCharsets, HttpEntity, MediaTypes}
 import spray.httpx.unmarshalling.Unmarshaller
 
-case class Weather(description: String, temperature: Double, rain: Option[Double], windSpeed: Double, direction: Int) {
-  override def toString: String = s"$description, about $temperature degrees with rain ($rain) and wind comming from $direction at speed $windSpeed"
+case class Weather(description: String, temperature: Double, rain: Double, windSpeed: Double, direction: Int) {
+  override def toString: String = s"$description, about $temperature degrees celcius with rain ($rain mm/3h) and wind coming from $direction at speed $windSpeed m/s"
 }
 
 trait WeatherJsonProtocol {
@@ -26,7 +26,7 @@ trait WeatherJsonProtocol {
     val windSpeed = json \ "wind" \ "speed"
     val windDirection = json \ "wind" \ "deg"
 
-    Weather(description.extract[String], temperature.extract[Double], rain.extractOpt[Double], windSpeed.extract[Double], windDirection.extract[Int])
+    Weather(description.extract[String], temperature.extract[Double], rain.extract[Double], windSpeed.extract[Double], windDirection.extract[Int])
   }
 
   /**

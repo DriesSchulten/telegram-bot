@@ -88,7 +88,7 @@ class WeatherCommandHandler(weatherApi: Uri, weatherToken: String) extends Actor
     case req: WeatherCommandRequest =>
       val origSender = sender()
 
-      val params = List(("appid", weatherToken)) ++ {
+      val params = List(("appid", weatherToken), ("units", "metric")) ++ {
         req.command match {
           case GetWeatherInCity(city) => List(("q", city))
           case GetWeatherOnLocation(lat, lng) => List(("lat", lat.toString), ("lng", lng.toString))
