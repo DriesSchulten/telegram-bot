@@ -26,7 +26,7 @@ object WeatherParser extends RegexParsers {
 
   private def getWeatherOnLocation = literal("/getweather") ~ doubleArgument ~ doubleArgument ^^ { case _ ~ lat ~ lng => GetWeatherOnLocation(lat, lng) }
 
-  private def argument = regex("[a-zA-Z]+[ a-zA-Z]*".r)
+  private def argument = regex("\\p{L}++[ \\p{L}]*".r)
 
   private def doubleArgument = regex("[0-9]+\\.[0-9]+".r) ^^ { value => value.toDouble }
 

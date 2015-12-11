@@ -11,6 +11,5 @@ object TelegramBot extends App {
   val system = ActorSystem("telegram-bot")
   val updatePoller = system.actorOf(UpdatePoller.props)
 
-  val echoListener = system.actorOf(EchoListener.props(updatePoller))
   val weatherListener = system.actorOf(WeatherListener.props(updatePoller))
 }
